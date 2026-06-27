@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { products } from '../../data/products.js';
+
+// Generate halaman statis untuk setiap produk yang terdaftar
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { prodId: product.id },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+---
+
+<Layout 
+  title={product.ogTitle} 
+  description={product.ogDescription} 
+  ogImage={product.ogImage}
+>
+  <div class="min-h-screen w-full max-w-md bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    
+    <h1 class="mt-6 text-base font-medium text-zinc-200">Menghubungkan Anda ke Shopee...</h1>
+    <p class="mt-2 text-xs text-zinc-500 px-8">Jika halaman tidak berpindah otomatis, klik tombol di bawah ini:</p>
+    
+    <a 
+      href={product.affiliateUrl} 
+      id="manual-link"
+      class="mt-6 px-6 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-lg font-bold text-xs shadow-lg transition-colors"
+    >
+      Buka Shopee Mall
+    </a>
+  </div>
+
+  <script define:vars={{ targetUrl: product.affiliateUrl }}>
+    // Langsung arahkan browser secepat mungkin
+    window.location.replace(targetUrl);
+    
+    // Cadangan jika metode 'replace' diblokir oleh in-app browser media sosial tertentu
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 250);
+  </script>
+</Layout>
